@@ -1,8 +1,9 @@
 package com.codeprophet.auth.services;
 
 import com.codeprophet.auth.auth.AuthenticationResponse;
-import com.codeprophet.auth.auth.AutheticationRequest;
+import com.codeprophet.auth.auth.AuthenticationRequest;
 import com.codeprophet.auth.auth.RegisterRequest;
+import com.codeprophet.auth.config.JwtService;
 import com.codeprophet.auth.user.Role;
 import com.codeprophet.auth.user.User;
 import com.codeprophet.auth.user.UserRepository;
@@ -17,7 +18,7 @@ import org.springframework.stereotype.Service;
 public class AuthenticationService {
 
     private final UserRepository repository;
-    private final PasswordEncoder passwordEncoderencoder;
+    private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
 
@@ -26,17 +27,18 @@ public class AuthenticationService {
                 .firstName(request.getFirstname())
                 .lastName(request.getLastname())
                 .email(request.getEmail())
-                .password(passwordEncoderencoder.encode(request.getPassword()))
+                .password(passwordEncoder.encode(request.getPassword()))
                 .role(Role.USER)
                 .build();
-        repository.save(user);
+        var savedUser = repository.save(user);
         var jwtToken = jwtService.generateToken(user);
+
         return AuthenticationResponse.builder()
                 .token(jwtToken)
                 .build();
     }
 
-    public AuthenticationResponse authenticate(AutheticationRequest request) {
+    public AuthenticationResponse authenticate(AuthenticationRequest request) {
         authenticationManager.authenticate(
           new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
         );

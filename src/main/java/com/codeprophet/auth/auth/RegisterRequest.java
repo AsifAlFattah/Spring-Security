@@ -1,5 +1,6 @@
 package com.codeprophet.auth.auth;
 
+import com.codeprophet.auth.user.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,5 +16,6 @@ public class RegisterRequest {
     private String lastname;
     private String email;
     private String password;
+    private Role role;
 
 }
